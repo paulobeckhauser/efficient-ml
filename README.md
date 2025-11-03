@@ -1,4 +1,4 @@
-# Efficient Deep Learning on Edge Devices
+# Efficient Machine Learning on Edge Devices
 
 This project is part of my **special course at DTU**, where I am exploring techniques for deploying Machine Learning and Deep Learning models on resource-constrained devices. The course follows the materials from [EfficientML](https://efficientml.ai/).
 
@@ -28,6 +28,7 @@ For this project, the primary hardware used is an **NVIDIA Jetson Orin Nano (8GB
 
 To verify the GPU and driver status, the `nvidia-smi` command can be used. Sample output:
 
+```bash
 Mon Nov  3 13:43:23 2025       
 +---------------------------------------------------------------------------------------+
 | NVIDIA-SMI 540.4.0                Driver Version: 540.4.0      CUDA Version: 12.6     |
@@ -48,6 +49,7 @@ Mon Nov  3 13:43:23 2025
 |=======================================================================================|
 |  No running processes found                                                           |
 +---------------------------------------------------------------------------------------+
+```
 
 ## Quantization
 
