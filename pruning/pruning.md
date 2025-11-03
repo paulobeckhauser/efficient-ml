@@ -1,0 +1,1 @@
+Pruning is a method to optimize AI models by reducing both model size and latency.

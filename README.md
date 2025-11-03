@@ -1,3 +1,7 @@
+# Efficient Deep Learning on Edge Devices
+
+This project is part of my **special course at DTU**, where I am exploring techniques for deploying Machine Learning and Deep Learning models on resource-constrained devices. The course follows the materials from [EfficientML](https://efficientml.ai/).
+
 ## Introduction
 
 Large Language Models (LLMs) are computationally heavy systems that require a significant amount of memory and processing power.  
@@ -9,13 +13,41 @@ However, these enhancements come with a cost: they make models even heavier, inc
 
 In addition, deploying Machine Learning or Deep Learning models in the Edge, such as IoT devices based on microcontrollers can be a challenge since memory and power resources are even more limited.
 
-So, the idea is to reduce both weights and activation to fit for example a Deep Neural Network in a tiny device.
+So, the idea is to reduce both weights and activation to fit for example a Deep Neural Network in a 'tiny' or edge device.
+
+While this course focuses on edge deployment, the techniques can also be applied to laptops or workstations to reduce memory and compute requirements.
 
 ## Hardware Overview
-- Device: NVIDIA Jetson Orin Nano (8GB)
+
+For this project, the primary hardware used is an **NVIDIA Jetson Orin Nano (8GB)**. The detailed specifications are:
+
 - GPU: 1024-core NVIDIA Ampere GPU with 32 Tensor Cores
 - CPU: 6-core ARM Cortex-A78AE 64-bit CPU
 - RAM: 8GB 128-bit LPDDR5
+
+
+To verify the GPU and driver status, the `nvidia-smi` command can be used. Sample output:
+
+Mon Nov  3 13:43:23 2025       
++---------------------------------------------------------------------------------------+
+| NVIDIA-SMI 540.4.0                Driver Version: 540.4.0      CUDA Version: 12.6     |
+|-----------------------------------------+----------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |
+|                                         |                      |               MIG M. |
+|=========================================+======================+======================|
+|   0  Orin (nvgpu)                  N/A  | N/A              N/A |                  N/A |
+| N/A   N/A  N/A               N/A /  N/A | Not Supported        |     N/A          N/A |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+                                                                                         
++---------------------------------------------------------------------------------------+
+| Processes:                                                                            |
+|  GPU   GI   CI        PID   Type   Process name                            GPU Memory |
+|        ID   ID                                                             Usage      |
+|=======================================================================================|
+|  No running processes found                                                           |
++---------------------------------------------------------------------------------------+
 
 ## Quantization
 
