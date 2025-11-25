@@ -1,7 +1,6 @@
 import torch
 import argparse
-
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
 def check_torch_device(verbose=True):
     """
@@ -32,7 +31,7 @@ def main(args):
 
     device = check_torch_device()
 
-    #Comment below condition, if want to run in CPU(such as laptop)
+    # Comment below condition, if want to run in CPU (such as laptop)
     
     # Abort if not using GPU
     if device.type != "cuda":
@@ -40,11 +39,82 @@ def main(args):
         return
 
     # Continue with GPU code
+    print("\n" + "="*60)
     print("Running main program on GPU...")
-
+    print("="*60 + "\n")
 
     model_name_or_path = args.model_name_or_path
-    print(f"Model: {model_name_or_path}")
+    print(f"Loading model: {model_name_or_path}")
+
+    # Load tokenizer
+    tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
+    
+    # Configure quantization if requested
+    if args.use_4bit:
+        print("Using 4-bit quantization...")
+        quant_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_use_double_quant=True,
+            bnb_4bit_compute_dtype=torch.float16,
+            bnb_4bit_quant_type="nf4"
+        )
+        
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name_or_path,
+            quantization_config=quant_config,
+            device_map="auto",
+            low_cpu_mem_usage=True,
+            attn_implementation="eager"  # FIXED: Added for compatibility
+        )
+    
+    else:
+        print("Loading in FP16...")
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name_or_path,
+            device_map="auto",
+            dtype=torch.float16,  # FIXED: Changed from torch_dtype
+            low_cpu_mem_usage=True,
+            attn_implementation="eager"  # FIXED: Added for compatibility
+        )
+
+    model.eval()
+    print(f"Model loaded successfully!")  # FIXED: Changed from printf
+    print(f"Memory footprint: {model.get_memory_footprint() / 1e9:.2f} GB\n")
+        
+    # Set up prompts
+    if args.test_prompts:
+        prompts = args.test_prompts
+    else:
+        prompts = [
+            "What is machine learning?",
+            "Explain quantum computing in simple terms.",
+            "Write a haiku about AI."
+        ]
+
+    # Run inference
+    print("="*60)
+    print(f"Running inference on {len(prompts)} prompts")
+    print("="*60 + "\n")
+
+    for i, prompt in enumerate(prompts, 1):
+        print(f"[Prompt {i}/{len(prompts)}]: {prompt}")
+
+        inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+
+        with torch.no_grad():
+            output_ids = model.generate(
+                **inputs,
+                max_new_tokens=args.max_gen_len,
+                do_sample=False,
+                pad_token_id=tokenizer.eos_token_id
+            )
+            output_text = tokenizer.decode(output_ids[0], skip_special_tokens=True)
+            
+        print(f"[Response]: {output_text}\n")
+        print("-"*60 + "\n")
+
+    print("All inference completed!")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

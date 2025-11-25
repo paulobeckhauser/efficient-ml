@@ -51,6 +51,20 @@ Mon Nov  3 13:43:23 2025
 +---------------------------------------------------------------------------------------+
 ```
 
+## Jetson Orin Nano
+
+with the command `cat /etc/nv_tegra_release' it was discovered that we have the version 6x. of Jetpack, since R36.x = JetPack 6.x
+
+Therefore, for Jetpack 6.0, the CUDA 12.2 needs to be installed.
+
+~/Documents/efficient-ml$ cat jetpack_v.txt 
+# R36 (release), REVISION: 4.7, GCID: 42132812, BOARD: generic, EABI: aarch64, DATE: Thu Sep 18 22:54:44 UTC 2025
+# KERNEL_VARIANT: oot
+TARGET_USERSPACE_LIB_DIR=nvidia
+TARGET_USERSPACE_LIB_DIR_PATH=usr/lib/aarch64-linux-gnu/nvidia
+
+
+
 ## Quantization
 
 There are two types of quantization:
