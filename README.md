@@ -19,6 +19,8 @@ While this course focuses on edge deployment, the techniques can also be applied
 
 ## Hardware Overview
 
+### NVIDIA Jetson Orin Nano - Caracteristics
+
 For this project, the primary hardware used is an **NVIDIA Jetson Orin Nano (8GB)**. The detailed specifications are:
 
 - GPU: 1024-core NVIDIA Ampere GPU with 32 Tensor Cores
@@ -50,16 +52,24 @@ Mon Nov  3 13:43:23 2025
 |  No running processes found                                                           |
 +---------------------------------------------------------------------------------------+
 ```
+When running `nvidia-smi` on an NVIDIA Jetson Orin device, many fields may appear as "N/A". This is normal and expected.
 
-## Jetson Orin Nano
+Jetson Orin uses an integrated GPU with unified memory, which makes it fundamentally different from discrete desktop or server GPUs such as the RTX, Tesla, or A100 series. Since `nvidia-smi` is designed for discrete GPU architectures, many of its usual features are not applicable on Jetson platforms, resulting in numerous fields appearing as “N/A”.
+
+Because the CPU and GPU share the same unified memory, Jetson cannot report separate GPU memory usage the way discrete GPUs do. Its cooling system also differs, as Jetson devices may rely on passive cooling or system-managed fans, meaning fan speed information is not accessible through nvidia-smi. Power and voltage reporting are likewise more limited compared to traditional GPU boards, and Jetson employs its own thermal control mechanisms that nvidia-smi is not designed to display.
+
+For a more complete system monitoring on Jetson devices, tools such as tegrastats, jtop, or the /sys interfaces provided by L4T should be used instead.
+
+
+### NVIDIA Software Installation
 
 with the command `cat /etc/nv_tegra_release' it was discovered that we have the version 6x. of Jetpack, since R36.x = JetPack 6.x
 
 Therefore, for Jetpack 6.0, the CUDA 12.2 needs to be installed.
 
 ~/Documents/efficient-ml$ cat jetpack_v.txt 
-# R36 (release), REVISION: 4.7, GCID: 42132812, BOARD: generic, EABI: aarch64, DATE: Thu Sep 18 22:54:44 UTC 2025
-# KERNEL_VARIANT: oot
+R36 (release), REVISION: 4.7, GCID: 42132812, BOARD: generic, EABI: aarch64, DATE: Thu Sep 18 22:54:44 UTC 2025
+KERNEL_VARIANT: oot
 TARGET_USERSPACE_LIB_DIR=nvidia
 TARGET_USERSPACE_LIB_DIR_PATH=usr/lib/aarch64-linux-gnu/nvidia
 
