@@ -88,3 +88,47 @@ The Jetson Orin Nano has 8GB of GPU memory, which is very limited comparing to d
 LLMs like Mistral-7B or LLaMA-2-7B are around 13-14GB in FP16, which is too large to load directly into 8GB GPU memory.
 
 Some models that interested to work on in this project are: Mistral-7B, LLaMA-7B, Mini LLaMA, Falcon-7B.
+
+| Model                     | Worked | Notes                  |
+|:--------------------------|:------:|-----------------------|
+| TinyLlama-1.1B-Chat-v1.0  | Yes    | Quantized: Yes & No   |
+
+
+### Progress
+
+First I tried to execute everything, using a very tiny model, just to have a first benchmarking that running in Jetson Orin Nano with libraries were working fine. So, I executed with a TinyLlama of ~1B parameters without quantization and worked fine.
+
+Then I tried to go direct to a heavier model, Mistral 7B. This model in FP16 (~14 GB) is too large for this Jetson's memory. The Orin Nano has 8 GB of unified memory (shared between CPU and GPU), so a 14 GB model simply won't fit. When it tries to load, it runs out of memory and the system freezes.
+
+It was tried then to apply 4-bit quantization.
+
+When trying to run 7B models with 4-bit quantization using the standard Hugging Face Transformers approach: 
+
+```bash
+from transformers import BitsAndBytesConfig
+
+# This will NOT work on Jetson Orin Nano 8GB
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_quant_type="nf4",
+    bnb_4bit_compute_dtype=torch.float16,
+)
+
+model = AutoModelForCausalLM.from_pretrained(
+    "mistralai/Mistral-7B-Instruct-v0.3",
+    quantization_config=bnb_config,  # Fails on Jetson
+)
+```
+
+I encountered this error:
+
+```bash
+Error named symbol not found at line 57 in file /src/csrc/ops.cu
+```
+
+This happens because first it was tried to used the library `bitsandbytes`, which is compiled for x86_64 (desktop) GPUs only. Jetson devices use ARM architecture with different CUDA operations, meaning that the library's low-level CUDA kernels are incompatible with Jetson's hardware.
+
+Possibilities:
+
+1. Already download pre-quantized models(ollama or GGUF models)
+2. Use TensorRT-LLM
