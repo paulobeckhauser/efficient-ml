@@ -132,3 +132,12 @@ Possibilities:
 
 1. Already download pre-quantized models(ollama or GGUF models)
 2. Use TensorRT-LLM
+
+
+After some trying...
+
+even with quantized models, I didn't make possible to run a model with 8B parameters in Jetson Orin Nano. This is primarily due to RAM from the GPU, but with the Jetson Orin Nano, it's more accurate to call it unified memory capacity.
+
+The Jetson Orin Nano uses a Unified Memory Architecture, which means the CPU (Central Processing Unit) and the GPU (Graphics Processing Unit) share the same pool of physical memory (RAM). There is no separate, dedicated VRAM (Video RAM) like on a standard desktop graphics card.
+
+LLaMA 3 8B (AWQ INT4): Even with 4-bit quantization (INT4), the model size is approximately 4 GB (8 billion parameters × 4 bits per parameter / 8 bits per byte). Jetson Orin Nano Memory: The Orin Nano typically comes with 8 GB of unified memory. Out of the 8 GB, a significant portion is already used by the Operating System (OS), system processes, and other software (often leaving about 6 GB to 7 GB usable). While 4 GB for the model weights might seem to fit, there's more memory required.
