@@ -135,7 +135,7 @@ Possibilities:
 1. Already download pre-quantized models(ollama or GGUF models)
 2. Use TensorRT-LLM
 
-After several attempts, even using the [TinyChat framework]([(https://github.com/mit-han-lab/TinyChatEngine)], the Jetson Orin Nano was able to download an 8B parameter model (quantized), but it completely froze when attempting to execute it.
+After several attempts, even using the [TinyChat framework](https://github.com/mit-han-lab/TinyChatEngine), the Jetson Orin Nano was able to download an 8B parameter model (quantized), but it completely froze when attempting to execute it.
 
 Even with quantized models, running an 8B parameter model on the Jetson Orin Nano proved infeasible. This limitation is primarily due to memory constraints, and in the case of the Orin Nano, it is more accurate to refer to this as unified memory capacity rather than separate GPU RAM.
 
