@@ -63,7 +63,15 @@ For a more complete system monitoring on Jetson devices, tools such as tegrastat
 
 ### NVIDIA Software Installation
 
-with the command `cat /etc/nv_tegra_release' it was discovered that we have the version 6x. of Jetpack, since R36.x = JetPack 6.x
+The setup process followed the official steps recommended in the NVIDIA Jetson Orin Nano Documentation, available at: https://developer.nvidia.com/embedded/learn/get-started-jetson-orin-nano-devkit.
+
+Note that the kit used in this project comes with an old firmware flashed at the factory, which is NOT compatible with JetPack 6.x, so it was needed to upgrade to the latest firmware, before inserting SD card flashed with JetPack 6.x image (unless the firmware previously updated).
+
+#### CUDA Installation
+
+Then the next step was to install CUDA.
+
+With the command `cat /etc/nv_tegra_release' it was discovered that we have the version 6x. of Jetpack, since R36.x = JetPack 6.x
 
 Therefore, for Jetpack 6.0, the CUDA 12.2 needs to be installed.
 
@@ -73,16 +81,16 @@ KERNEL_VARIANT: oot
 TARGET_USERSPACE_LIB_DIR=nvidia
 TARGET_USERSPACE_LIB_DIR_PATH=usr/lib/aarch64-linux-gnu/nvidia
 
+#### Torch Installation
+Installing PyTorch on the Jetson Orin Nano was not as straightforward as suggested in the official documentation (https://docs.nvidia.com/deeplearning/frameworks/install-pytorch-jetson-platform/index.html).
 
+There are several version incompatibilities between JetPack, CUDA, and the PyTorch builds provided.
 
-## Quantization
+The most reliable method is to manually download the appropriate PyTorch wheel from NVIDIA’s package repository: https://developer.download.nvidia.com/compute/redist/jp/
 
-There are two types of quantization:
+Since my JetPack version was 6.x, the compatible PyTorch release corresponded to JetPack 6.1, which ensured that CUDA, PyTorch, and the system libraries matched correctly.
 
-- **Quantize both weight and activation** (e.g. SmoothQuant) which is good for large batch inference
-- **Weight-only activation** (e.g. AWQ) which is better for single batch inference
-
-## 1. Choosing some LLM models
+## Efficient LLM Deployment
 The Jetson Orin Nano has 8GB of GPU memory, which is very limited comparing to datacenters that LLMs can easily require something around 10-100GB in FP16 precision.
 
 LLMs like Mistral-7B or LLaMA-2-7B are around 13-14GB in FP16, which is too large to load directly into 8GB GPU memory.
@@ -127,10 +135,7 @@ Possibilities:
 1. Already download pre-quantized models(ollama or GGUF models)
 2. Use TensorRT-LLM
 
-
 After several attempts, even using the [TinyChat framework]([https://example.com](https://github.com/mit-han-lab/TinyChatEngine), the Jetson Orin Nano was able to download an 8B parameter model (quantized), but it completely froze when attempting to execute it.
-
-
 
 Even with quantized models, running an 8B parameter model on the Jetson Orin Nano proved infeasible. This limitation is primarily due to memory constraints, and in the case of the Orin Nano, it is more accurate to refer to this as unified memory capacity rather than separate GPU RAM.
 
