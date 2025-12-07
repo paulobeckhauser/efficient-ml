@@ -87,12 +87,6 @@ The Jetson Orin Nano has 8GB of GPU memory, which is very limited comparing to d
 
 LLMs like Mistral-7B or LLaMA-2-7B are around 13-14GB in FP16, which is too large to load directly into 8GB GPU memory.
 
-Some models that interested to work on in this project are: Mistral-7B, LLaMA-7B, Mini LLaMA, Falcon-7B.
-
-| Model                     | Worked | Notes                  |
-|:--------------------------|:------:|-----------------------|
-| TinyLlama-1.1B-Chat-v1.0  | Yes    | Quantized: Yes & No   |
-
 
 ### Progress
 
@@ -134,10 +128,12 @@ Possibilities:
 2. Use TensorRT-LLM
 
 
-After some trying...
+After several attempts, even using the [TinyChat framework]([https://example.com](https://github.com/mit-han-lab/TinyChatEngine), the Jetson Orin Nano was able to download an 8B parameter model (quantized), but it completely froze when attempting to execute it.
 
-even with quantized models, I didn't make possible to run a model with 8B parameters in Jetson Orin Nano. This is primarily due to RAM from the GPU, but with the Jetson Orin Nano, it's more accurate to call it unified memory capacity.
 
-The Jetson Orin Nano uses a Unified Memory Architecture, which means the CPU (Central Processing Unit) and the GPU (Graphics Processing Unit) share the same pool of physical memory (RAM). There is no separate, dedicated VRAM (Video RAM) like on a standard desktop graphics card.
 
-LLaMA 3 8B (AWQ INT4): Even with 4-bit quantization (INT4), the model size is approximately 4 GB (8 billion parameters × 4 bits per parameter / 8 bits per byte). Jetson Orin Nano Memory: The Orin Nano typically comes with 8 GB of unified memory. Out of the 8 GB, a significant portion is already used by the Operating System (OS), system processes, and other software (often leaving about 6 GB to 7 GB usable). While 4 GB for the model weights might seem to fit, there's more memory required.
+Even with quantized models, running an 8B parameter model on the Jetson Orin Nano proved infeasible. This limitation is primarily due to memory constraints, and in the case of the Orin Nano, it is more accurate to refer to this as unified memory capacity rather than separate GPU RAM.
+
+The Jetson Orin Nano employs a Unified Memory Architecture, meaning that the CPU (Central Processing Unit) and GPU (Graphics Processing Unit) share the same physical memory pool. Unlike standard desktop GPUs, there is no dedicated VRAM; both processors draw from the same memory resources.
+
+For example, the LLaMA 3 8B (AWQ INT4) model, even with 4-bit quantization, requires approximately 4 GB of memory for the model weights (8 billion parameters × 4 bits per parameter ÷ 8 bits per byte). The Orin Nano typically has 8 GB of unified memory, but a significant portion is already consumed by the operating system, system processes, and other software, leaving only about 6–7 GB available. Moreover, additional memory is required for activations and temporary buffers during model execution, which makes running an 8B model on this device impractical.
