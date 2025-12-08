@@ -5,7 +5,6 @@ from pathlib import Path
 import torch
 import numpy as np
 
-# Test prompts for evaluation
 TEST_PROMPTS = [
     "Explain quantum computing in simple terms.",
     "Write a Python function to calculate fibonacci numbers.",
@@ -39,7 +38,7 @@ def benchmark_transformers_fp16(model_name="TinyLlama/TinyLlama-1.1B-Chat-v1.0")
     
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
-        torch_dtype=torch.float16,
+        dtype=torch.float16,
         device_map="auto",
         low_cpu_mem_usage=True,
     )
@@ -297,12 +296,12 @@ def main():
         try:
             fp16_results = benchmark_transformers_fp16(args.hf_model)
         except Exception as e:
-            print(f"\n❌ FP16 benchmark failed: {e}")
+            print(f"\n FP16 benchmark failed: {e}")
 
     try:
         quant_results = benchmark_gguf(args.gguf_model)
     except Exception as e:
-        print(f"\n❌ Quantized benchmark failed: {e}")
+        print(f"\n Quantized benchmark failed: {e}")
 
     if fp16_results and quant_results:
         similarities = compare_outputs(fp16_results, quant_results)
@@ -310,10 +309,10 @@ def main():
         print_summary(fp16_results, quant_results)
         save_results(fp16_results, quant_results, args.output)
     elif quant_results:
-        print("\n✓ Quantized benchmark complete (FP16 skipped)")
+        print("\n Quantized benchmark complete (FP16 skipped)")
         save_results({}, quant_results, args.output)
     else:
-        print("\n❌ No benchmarks completed successfully")
+        print("\n No benchmarks completed successfully")
 
 if __name__ == "__main__":
     main()
